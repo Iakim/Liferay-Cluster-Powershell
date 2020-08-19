@@ -10,10 +10,11 @@ $cluster_name = "liferay-cluster"
 
 # Install Java
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$URL=(Invoke-WebRequest -UseBasicParsing https://www.java.com/en/download/manual.jsp).Content | %{[regex]::matches($_, '(?:<a title="Download Java software for Windows Online" href=")(.*)(?:">)').Groups[1].Value}
+$URL=(Invoke-WebRequest -UseBasicParsing https://www.java.com/en/download/manual.jsp).Content | %{[regex]::matches($_, '(?:<a title="Download Java software for Windows \(64-bit\)" href=")(.*)(?:">)').Groups[1].Value}
 Invoke-WebRequest -UseBasicParsing -OutFile jre8.exe $URL
 Start-Process .\jre8.exe -argumentlist '/s INSTALL_SILENT=1 STATIC=0 AUTO_UPDATE=0 WEB_JAVA=1 WEB_JAVA_SECURITY_LEVEL=H WEB_ANALYTICS=0 EULA=0 REBOOT=0 NOSTARTMENU=0 SPONSORS=0 /L c:\jre8.log' -wait
 echo $?
+[System.Environment]::SetEnvironmentVariable('JAVA_HOME','C:\Program Files\Java\jre1.8.0_261',[System.EnvironmentVariableTarget]::Machine)
 
 New-Item -ItemType directory -Path C:\elasticsearch-$version
 Invoke-WebRequest https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-$version.msi -OutFile C:\elasticsearch-$version.msi
