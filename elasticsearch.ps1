@@ -5,8 +5,10 @@
 
 $version = "6.5.1"
 $hostname = hostname
-$ip = Get-NetIPAddress -AddressFamily IPv4
+$ip = Get-NetIPAddress -AddressFamily IPv4 | findstr IPAddress | findstr /v 127.0.0.1 | Foreach {"$(($_ -split '\s+',4)[2])"}
 $cluster_name = "liferay-cluster"
+$fileconfig = "C:\elasticsearch-$version\config\elasticsearch.yml"
+$batplugin = "C:\elasticsearch-$version\config\plugins.bat"
 
 # Install Java
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -27,35 +29,35 @@ function Unzip
 Unzip C:\elasticsearch-$version\elasticsearch-$version.zip C:\elasticsearch-$version\elasticsearch-$version
 Move-Item C:\elasticsearch-$version\elasticsearch-$version\elasticsearch-$version\* C:\elasticsearch-$version
 Remove-Item –recurse -Path C:\elasticsearch-$version\elasticsearch-$version
-Rename-Item C:\elasticsearch-$version\config\elasticsearch.yml C:\elasticsearch-$version\config\elasticsearch.yml.save
-New-Item  C:\elasticsearch-$version\config\elasticsearch.yml
+Rename-Item $fileconfig $fileconfig.save
+New-Item $fileconfig
 
 
 # Configure elasticsearch.yaml
-echo "bootstrap.memory_lock: false" >> C:\elasticsearch-$version\config\elasticsearch.yml
-echo "cluster.name: $cluster_name" >> C:\elasticsearch-$version\config\elasticsearch.yml
-echo "network.host: $ip" >> C:\elasticsearch-$version\config\elasticsearch.yml
-echo "node.data: true" >> C:\elasticsearch-$version\config\elasticsearch.yml
-echo "node.ingest: false" >> C:\elasticsearch-$version\config\elasticsearch.yml
-echo "node.master: true" >> C:\elasticsearch-$version\config\elasticsearch.yml
-echo "node.max_local_storage_nodes: 1" >> C:\elasticsearch-$version\config\elasticsearch.yml
-echo "node.name: $hostname" >> C:\elasticsearch-$version\config\elasticsearch.yml
-echo "path.data: C:\elasticsearch-$version\data" >> C:\elasticsearch-$version\config\elasticsearch.yml
-echo "path.logs: C:\elasticsearch-$version\logs" >> C:\elasticsearch-$version\config\elasticsearch.yml
-echo "xpack.license.self_generated.type: basic" >> C:\elasticsearch-$version\config\elasticsearch.yml
-echo "xpack.security.enabled: false" >> C:\elasticsearch-$version\config\elasticsearch.yml
-echo "action.destructive_requires_name: true" >> C:\elasticsearch-$version\config\elasticsearch.yml
-echo "http.compression: true" >> C:\elasticsearch-$version\config\elasticsearch.yml
-echo 'http.cors.allow-origin: "*"' >> C:\elasticsearch-$version\config\elasticsearch.yml
-echo "http.cors.enabled: true" >> C:\elasticsearch-$version\config\elasticsearch.yml
-echo "thread_pool.search.queue_size: 5000" >> C:\elasticsearch-$version\config\elasticsearch.yml
-echo "thread_pool.search.min_queue_size: 1000" >> C:\elasticsearch-$version\config\elasticsearch.yml
+
+Add-Content $fileconfig "bootstrap.memory_lock: false"
+Add-Content $fileconfig "cluster.name: $cluster_name"
+Add-Content $fileconfig "network.host: $ip"
+Add-Content $fileconfig "node.data: true"
+Add-Content $fileconfig "node.ingest: false"
+Add-Content $fileconfig "node.master: true"
+Add-Content $fileconfig "node.max_local_storage_nodes: 1"
+Add-Content $fileconfig "node.name: $hostname"
+Add-Content $fileconfig "path.data: C:\elasticsearch-$version\data"
+Add-Content $fileconfig "path.logs: C:\elasticsearch-$version\logs"
+Add-Content $fileconfig "xpack.license.self_generated.type: basic"
+Add-Content $fileconfig "xpack.security.enabled: false"
+Add-Content $fileconfig "action.destructive_requires_name: true"
+Add-Content $fileconfig "http.compression: true"
+Add-Content $fileconfig 'http.cors.allow-origin: "*"'
+Add-Content $fileconfig "http.cors.enabled: true"
+Add-Content $fileconfig "thread_pool.search.queue_size: 5000"
+Add-Content $fileconfig "thread_pool.search.min_queue_size: 1000"
 
 # Install Plugins
-cmd.exe /k "C:\elasticsearch-$version\bin\elasticsearch-plugin.bat install analysis-icu"
-cmd.exe /k "C:\elasticsearch-$version\bin\elasticsearch-plugin.bat install analysis-kuromoji"
-cmd.exe /k "C:\elasticsearch-$version\bin\elasticsearch-plugin.bat install analysis-smartcn"
-cmd.exe /k "C:\elasticsearch-$version\bin\elasticsearch-plugin.bat install analysis-stempel"
+Add-Content $batplugin "@echo off"
+Add-Content $batplugin "C:\elasticsearch-$version\bin\elasticsearch-plugin.bat install analysis-icu & C:\elasticsearch-$version\bin\elasticsearch-plugin.bat install analysis-kuromoji & C:\elasticsearch-$version\bin\elasticsearch-plugin.bat install analysis-smartcn & C:\elasticsearch-$version\bin\elasticsearch-plugin.bat install analysis-stempel"
+Start-Process $batplugin
 
 # Start
-cmd.exe /k "C:\elasticsearch-$version\bin\elasticsearch.bat"
+Start-Process "C:\elasticsearch-$version\bin\elasticsearch.bat"
