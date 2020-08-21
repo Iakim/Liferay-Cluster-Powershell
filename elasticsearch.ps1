@@ -6,6 +6,12 @@
 ###################################################################################
 
 # Universal Vars
+# This variables you can use to determine install or not ElasticSearch like a Windows Service
+# If $INSTALL = 1 the ElasticSearch Install like a Windows Service, If other 0, start from CMD
+# INSTALL
+$INSTALL = 1
+# NOT INSTALL
+#$INSTALL = 0
 $VERSION = "6.5.1"
 $HOSTNAME = hostname
 $IP = Get-NetIPAddress -AddressFamily IPv4 | findstr IPAddress | findstr /v 127.0.0.1 | Foreach {"$(($_ -split '\s+',4)[2])"}
@@ -39,7 +45,7 @@ $NAMEEXE="java-$JAVAVERSION.exe"
 Invoke-WebRequest -UseBasicParsing -OutFile C:\$NAMEEXE $URL
 Start-Process C:\$NAMEEXE -argumentlist '/s INSTALL_SILENT=1 STATIC=0 AUTO_UPDATE=0 WEB_JAVA=1 WEB_JAVA_SECURITY_LEVEL=H WEB_ANALYTICS=0 EULA=0 REBOOT=0 NOSTARTMENU=0 SPONSORS=0 /L c:\jre8.log' -wait
 echo $?
-    
+
 # Set JAVA_HOME
 $JAVAPATHNAME=Get-ChildItem 'C:\Program Files\Java' | Sort-Object -Descending -Property Name | select-Object Name | findstr jdk | select -First 1
 echo $JAVAPATHNAME
@@ -117,7 +123,34 @@ Add-Content $JVMCONFIG "-Xms2048m"
 Add-Content $BATPLUGIN "@echo off"
 Add-Content $BATPLUGIN "C:\elasticsearch-$VERSION\bin\elasticsearch-plugin.bat install analysis-icu & C:\elasticsearch-$VERSION\bin\elasticsearch-plugin.bat install analysis-kuromoji & C:\elasticsearch-$VERSION\bin\elasticsearch-plugin.bat install analysis-smartcn & C:\elasticsearch-$VERSION\bin\elasticsearch-plugin.bat install analysis-stempel"
 Start-Process $BATPLUGIN
-Start-Sleep 60
+Start-Sleep 40
 
 # Start
-Start-Process "C:\elasticsearch-$VERSION\bin\elasticsearch.bat"
+if("$INSTALL" -eq 1){
+  Start-Process C:\elasticsearch-$VERSION\bin\elasticsearch-service.bat install
+  Start-Sleep 5
+  Set-Service elasticsearch-service-x64 -StartupType Automatic
+      function Set-ServiceRecovery{
+        [alias('Set-Recovery')]
+        param
+        (
+            [string] [Parameter(Mandatory=$true)] $ServiceDisplayName,
+            [string] $action1 = "restart",
+            [int] $time1 =  30000,
+            [string] $action2 = "restart",
+            [int] $time2 =  30000,
+            [string] $actionLast = "restart",
+            [int] $timeLast = 30000,
+            [int] $resetCounter = 4000
+        )
+        $services = Get-CimInstance -ClassName 'Win32_Service' | Where-Object {$_.DisplayName -imatch $ServiceDisplayName}
+        $action = $action1+"/"+$time1+"/"+$action2+"/"+$time2+"/"+$actionLast+"/"+$timeLast
+        foreach ($service in $services){
+            $output = sc.exe failure $($service.Name) actions= $action reset= $resetCounter
+        }
+    }
+    Set-ServiceRecovery -ServiceDisplayName "Elasticsearch 6.5.1"
+  Start-Service elasticsearch-service-x64
+}else {
+   Start-Process "C:\elasticsearch-$VERSION\bin\elasticsearch.bat"
+}
