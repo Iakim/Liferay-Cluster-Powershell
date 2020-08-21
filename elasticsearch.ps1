@@ -1,7 +1,9 @@
-##############################################################################
-# NAME:                Script for install ElasticSearch on Windows Server 2016
-# AUTHORS:             Isaac de Moraes
-##############################################################################
+###################################################################################
+## Liferay Cluster with Powershell                                               ##
+## Script for install ElasticSearch on Windows Server 2016                       ##
+## Author: https://github.com/Iakim                                              ##
+## Simplicity is the ultimate degree of sophistication                           ##
+###################################################################################
 
 # Universal Vars
 $VERSION = "6.5.1"
@@ -37,7 +39,7 @@ $NAMEEXE="java-$JAVAVERSION.exe"
 Invoke-WebRequest -UseBasicParsing -OutFile C:\$NAMEEXE $URL
 Start-Process C:\$NAMEEXE -argumentlist '/s INSTALL_SILENT=1 STATIC=0 AUTO_UPDATE=0 WEB_JAVA=1 WEB_JAVA_SECURITY_LEVEL=H WEB_ANALYTICS=0 EULA=0 REBOOT=0 NOSTARTMENU=0 SPONSORS=0 /L c:\jre8.log' -wait
 echo $?
-
+    
 # Set JAVA_HOME
 $JAVAPATHNAME=Get-ChildItem 'C:\Program Files\Java' | Sort-Object -Descending -Property Name | select-Object Name | findstr jdk | select -First 1
 echo $JAVAPATHNAME
