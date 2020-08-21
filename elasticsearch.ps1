@@ -130,26 +130,26 @@ if("$INSTALL" -eq 1){
   Start-Process C:\elasticsearch-$VERSION\bin\elasticsearch-service.bat install
   Start-Sleep 5
   Set-Service elasticsearch-service-x64 -StartupType Automatic
-      function Set-ServiceRecovery{
-        [alias('Set-Recovery')]
-        param
-        (
-            [string] [Parameter(Mandatory=$true)] $ServiceDisplayName,
-            [string] $action1 = "restart",
-            [int] $time1 =  30000,
-            [string] $action2 = "restart",
-            [int] $time2 =  30000,
-            [string] $actionLast = "restart",
-            [int] $timeLast = 30000,
-            [int] $resetCounter = 4000
-        )
-        $services = Get-CimInstance -ClassName 'Win32_Service' | Where-Object {$_.DisplayName -imatch $ServiceDisplayName}
-        $action = $action1+"/"+$time1+"/"+$action2+"/"+$time2+"/"+$actionLast+"/"+$timeLast
-        foreach ($service in $services){
-            $output = sc.exe failure $($service.Name) actions= $action reset= $resetCounter
-        }
+  function Set-ServiceRecovery{
+    [alias('Set-Recovery')]
+    param
+    (
+      [string] [Parameter(Mandatory=$true)] $ServiceDisplayName,
+      [string] $action1 = "restart",
+      [int] $time1 =  30000,
+      [string] $action2 = "restart",
+      [int] $time2 =  30000,
+      [string] $actionLast = "restart",
+      [int] $timeLast = 30000,
+      [int] $resetCounter = 4000
+    )
+    $services = Get-CimInstance -ClassName 'Win32_Service' | Where-Object {$_.DisplayName -imatch $ServiceDisplayName}
+    $action = $action1+"/"+$time1+"/"+$action2+"/"+$time2+"/"+$actionLast+"/"+$timeLast
+    foreach ($service in $services){
+      $output = sc.exe failure $($service.Name) actions= $action reset= $resetCounter
     }
-    Set-ServiceRecovery -ServiceDisplayName "Elasticsearch 6.5.1"
+  }
+  Set-ServiceRecovery -ServiceDisplayName "Elasticsearch 6.5.1"
   Start-Service elasticsearch-service-x64
 }else {
    Start-Process "C:\elasticsearch-$VERSION\bin\elasticsearch.bat"
