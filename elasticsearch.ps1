@@ -62,7 +62,7 @@ function Unzip
 }
 Unzip C:\elasticsearch-$VERSION\elasticsearch-$VERSION.zip C:\elasticsearch-$VERSION\elasticsearch-$VERSION
 Move-Item C:\elasticsearch-$VERSION\elasticsearch-$VERSION\elasticsearch-$VERSION\* C:\elasticsearch-$VERSION
-Remove-Item –recurse -Path C:\elasticsearch-$VERSION\elasticsearch-$VERSION
+Remove-Item -recurse -Path C:\elasticsearch-$VERSION\elasticsearch-$VERSION
 Rename-Item $FILECONFIG "$FILECONFIG.old"
 New-Item $FILECONFIG
 Rename-Item $JVMCONFIG "$JVMCONFIG.old"
