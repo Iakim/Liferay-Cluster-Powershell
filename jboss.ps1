@@ -6,6 +6,8 @@
 ## Simplicity is the ultimate degree of sophistication                           ##
 ###################################################################################
 
+$FILECONFIG = C:\liferay\wildfly-18.0.1\standalone\configuration\standalone.xml
+
 # Install Java
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 # This URL was converted by https://sites.google.com/view/java-se-download-url-converter
@@ -47,4 +49,5 @@ function Unzip
     [System.IO.Compression.ZipFile]::ExtractToDirectory($ZIPFILE, $OUTPATH)
 }
 Unzip C:\wildfly-18.0.1.Final.zip C:\liferay\wildfly-18.0.1
-
+Rename-Item $FILECONFIG "$FILECONFIG.old"
+Invoke-WebRequest https://raw.githubusercontent.com/Iakim/Liferay-Cluster-Powershell/master/standalone.xml -OutFile $FILECONFIG
