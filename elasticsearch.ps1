@@ -120,7 +120,7 @@ Add-Content $JVMCONFIG "-Xms2048m"
 
 # Install Plugins
 Add-Content $BATPLUGIN "@echo off"
-Add-Content $BATPLUGIN "C:\elasticsearch-$VERSION\bin\elasticsearch-plugin.bat install analysis-icu; C:\elasticsearch-$VERSION\bin\elasticsearch-plugin.bat install analysis-kuromoji; C:\elasticsearch-$VERSION\bin\elasticsearch-plugin.bat install analysis-smartcn; C:\elasticsearch-$VERSION\bin\elasticsearch-plugin.bat install analysis-stempel"
+Add-Content $BATPLUGIN "C:\elasticsearch-$VERSION\bin\elasticsearch-plugin.bat install analysis-icu & C:\elasticsearch-$VERSION\bin\elasticsearch-plugin.bat install analysis-kuromoji & C:\elasticsearch-$VERSION\bin\elasticsearch-plugin.bat install analysis-smartcn & C:\elasticsearch-$VERSION\bin\elasticsearch-plugin.bat install analysis-stempel"
 Start-Process $BATPLUGIN
 Start-Sleep 40
 
