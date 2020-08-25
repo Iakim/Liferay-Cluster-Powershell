@@ -1,4 +1,3 @@
-
 ###################################################################################
 ## Liferay Cluster with Powershell                                               ##
 ## Script for install JBoss Wildfly on Windows Server 2016                       ##
