@@ -7,6 +7,8 @@
 ###################################################################################
 
 $FILECONFIG = C:\liferay\wildfly-18.0.1\standalone\configuration\standalone.xml
+$WARFOLDER = C:\liferay\wildfly-18.0.1\standalone\deployments\ROOT.war
+$DEPFOLDER = C:\liferay\wildfly-18.0.1\standalone\modules\com\liferay\portal\main
 
 # Install Java
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -51,3 +53,22 @@ function Unzip
 Unzip C:\wildfly-18.0.1.Final.zip C:\liferay\wildfly-18.0.1
 Rename-Item $FILECONFIG "$FILECONFIG.old"
 Invoke-WebRequest https://raw.githubusercontent.com/Iakim/Liferay-Cluster-Powershell/master/standalone.xml -OutFile $FILECONFIG
+
+# Install Liferay 7.3.2CE GA3
+New-Item -ItemType directory -Path $WARFOLDER
+New-Item -ItemType directory -Path $DEPFOLDER
+New-Item -ItemType directory -Path C:\liferay\data
+New-Item -ItemType directory -Path C:\liferay\deploy
+New-Item -ItemType directory -Path C:\liferay\logs
+New-Item -ItemType directory -Path C:\liferay\osgi
+Invoke-WebRequest https://raw.githubusercontent.com/Iakim/Liferay-Cluster-Powershell/master/module.xml -OutFile $DEPFOLDER\module.xml
+Invoke-WebRequest  "https://sourceforge.net/projects/lportal/files/Liferay%20Portal/7.3.2%20GA3/liferay-ce-portal-dependencies-7.3.2-ga3-20200519164024819.zip/download" -OutFile C:\dependencies.zip
+Invoke-WebRequest  "https://sourceforge.net/projects/lportal/files/Liferay%20Portal/7.3.2%20GA3/liferay-ce-portal-osgi-7.3.2-ga3-20200519164024819.zip/download" -OutFile C:\osgi.zip
+Invoke-WebRequest  "https://sourceforge.net/projects/lportal/files/Liferay%20Portal/7.3.2%20GA3/liferay-ce-portal-7.3.2-ga3-20200519164024819.war/download" -OutFile C:\ROOT.war
+Invoke-WebRequest  "https://search.maven.org/remotecontent?filepath=it/dontesta/labs/liferay/portal/db/liferay-portal-database-all-in-one-support/1.2.1/liferay-portal-database-all-in-one-support-1.2.1.jar" -OutFile C:\liferay-portal-database-all-in-one-support-1.2.1.jar
+Unzip C:\dependencies.zip $DEPFOLDER\
+Unzip C:\osgi.zip C:\liferay\osgi\
+Unzip C:\ROOT.war $WARFOLDER\
+Move-Item C:\liferay-portal-database-all-in-one-support-1.2.1.jar $WARFOLDER\WEB-INF\lib\
+
+
