@@ -122,12 +122,12 @@ Add-Content $JVMCONFIG "-Xms2048m"
 # Install Plugins
 Add-Content $BATPLUGIN "@echo off"
 Add-Content $BATPLUGIN "C:\elasticsearch-$VERSION\bin\elasticsearch-plugin.bat install analysis-icu & C:\elasticsearch-$VERSION\bin\elasticsearch-plugin.bat install analysis-kuromoji & C:\elasticsearch-$VERSION\bin\elasticsearch-plugin.bat install analysis-smartcn & C:\elasticsearch-$VERSION\bin\elasticsearch-plugin.bat install analysis-stempel"
-Start-Process $BATPLUGIN
+Start-Process "cmd.exe" "/k $BATPLUGIN"
 Start-Sleep 40
 
 # Start
 if("$INSTALL" -eq 1){
-  Start-Process C:\elasticsearch-$VERSION\bin\elasticsearch-service.bat install
+  Start-Process "cmd.exe" "/k C:\elasticsearch-$VERSION\bin\elasticsearch-service.bat install"
   Start-Sleep 5
   Set-Service elasticsearch-service-x64 -StartupType Automatic
   function Set-ServiceRecovery{
@@ -152,5 +152,5 @@ if("$INSTALL" -eq 1){
   Set-ServiceRecovery -ServiceDisplayName "Elasticsearch 6.5.1"
   Start-Service elasticsearch-service-x64
 }else {
-   Start-Process "C:\elasticsearch-$VERSION\bin\elasticsearch.bat"
+   Start-Process "cmd.exe" "/k C:\elasticsearch-$VERSION\bin\elasticsearch.bat"
 }
