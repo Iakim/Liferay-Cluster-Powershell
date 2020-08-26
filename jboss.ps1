@@ -39,6 +39,7 @@ echo $?
 $JAVAPATHNAME=Get-ChildItem 'C:\Program Files\Java' | Sort-Object -Descending -Property Name | select-Object Name | findstr jdk | select -First 1
 [System.Environment]::SetEnvironmentVariable("JAVA_HOME","C:\Program Files\Java\$JAVAPATHNAME",[System.EnvironmentVariableTarget]::Machine)
 [System.Environment]::SetEnvironmentVariable("JAVA_HOME","C:\Program Files\Java\$JAVAPATHNAME",[System.EnvironmentVariableTarget]::User)
+$JAVA_HOME = "C:\Program Files\Java\$JAVAPATHNAME"
 
 # Install JBoss Wildfly 18.0.1
 New-Item -ItemType directory -Path C:\liferay
