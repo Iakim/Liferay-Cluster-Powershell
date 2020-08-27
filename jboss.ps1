@@ -7,7 +7,7 @@
 
 $FILECONFIG = "C:\liferay\wildfly-18.0.1.Final\standalone\configuration\standalone.xml"
 $WARFOLDER = "C:\liferay\wildfly-18.0.1.Final\standalone\deployments\ROOT.war"
-$DEPFOLDER = "C:\liferay\wildfly-18.0.1.Final\standalone\modules\com\liferay\portal\main"
+$DEPFOLDER = "C:\liferay\wildfly-18.0.1.Final\modules\com\liferay\portal\main"
 
 # Install Java
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -62,11 +62,18 @@ New-Item -ItemType directory -Path C:\liferay\deploy
 New-Item -ItemType directory -Path C:\liferay\logs
 New-Item -ItemType directory -Path C:\liferay\osgi
 Invoke-WebRequest https://raw.githubusercontent.com/Iakim/Liferay-Cluster-Powershell/master/module.xml -OutFile $DEPFOLDER\module.xml
-Invoke-WebRequest  "https://sourceforge.net/projects/lportal/files/Liferay%20Portal/7.3.2%20GA3/liferay-ce-portal-dependencies-7.3.2-ga3-20200519164024819.zip/download" -OutFile C:\dependencies.zip
-Invoke-WebRequest  "https://sourceforge.net/projects/lportal/files/Liferay%20Portal/7.3.2%20GA3/liferay-ce-portal-osgi-7.3.2-ga3-20200519164024819.zip/download" -OutFile C:\osgi.zip
-Invoke-WebRequest  "https://sourceforge.net/projects/lportal/files/Liferay%20Portal/7.3.2%20GA3/liferay-ce-portal-7.3.2-ga3-20200519164024819.war/download" -OutFile C:\ROOT.war
+$URLDEP=(Invoke-WebRequest -UseBasicParsing "https://sourceforge.net/settings/mirror_choices?projectname=lportal&filename=Liferay%20Portal/7.3.2%20GA3/liferay-ce-portal-dependencies-7.3.2-ga3-20200519164024819.zip&selected=svwh").Content | %{[regex]::matches($_, '(?:Please use this <a href=")(.*)(?:">)').Groups[1].Value}
+Invoke-WebRequest -UseBasicParsing -OutFile C:\dependencies.zip $URLDEP
+$URLOSGI=(Invoke-WebRequest -UseBasicParsing "https://sourceforge.net/settings/mirror_choices?projectname=lportal&filename=Liferay%20Portal/7.3.2%20GA3/liferay-ce-portal-osgi-7.3.2-ga3-20200519164024819.zip&selected=svwh").Content | %{[regex]::matches($_, '(?:Please use this <a href=")(.*)(?:">)').Groups[1].Value}
+Invoke-WebRequest -UseBasicParsing -OutFile C:\osgi.zip $URLOSGI
+$URLWAR=(Invoke-WebRequest -UseBasicParsing "https://sourceforge.net/settings/mirror_choices?projectname=lportal&filename=Liferay%20Portal/7.3.2%20GA3/liferay-ce-portal-7.3.2-ga3-20200519164024819.war&selected=svwh").Content | %{[regex]::matches($_, '(?:Please use this <a href=")(.*)(?:">)').Groups[1].Value}
+Invoke-WebRequest -UseBasicParsing -OutFile C:\ROOT.war $URLWAR
 Invoke-WebRequest  "https://search.maven.org/remotecontent?filepath=it/dontesta/labs/liferay/portal/db/liferay-portal-database-all-in-one-support/1.2.1/liferay-portal-database-all-in-one-support-1.2.1.jar" -OutFile C:\liferay-portal-database-all-in-one-support-1.2.1.jar
 Unzip C:\dependencies.zip $DEPFOLDER
+Move-Item $DEPFOLDER\liferay-ce-portal-dependencies-7.3.2-ga3\* $DEPFOLDER
+Remove-Item -Path $DEPFOLDER\liferay-ce-portal-dependencies-7.3.2-ga3
 Unzip C:\osgi.zip C:\liferay\osgi
+Move-Item C:\liferay\osgi\liferay-ce-portal-osgi-7.3.2-ga3\* C:\liferay\osgi
+Remove-Item -Path C:\liferay\osgi\liferay-ce-portal-osgi-7.3.2-ga3
 Unzip C:\ROOT.war $WARFOLDER
 Move-Item C:\liferay-portal-database-all-in-one-support-1.2.1.jar $WARFOLDER\WEB-INF\lib
