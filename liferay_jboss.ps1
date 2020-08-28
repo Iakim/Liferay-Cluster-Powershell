@@ -61,6 +61,7 @@ New-Item -ItemType directory -Path C:\liferay\data
 New-Item -ItemType directory -Path C:\liferay\deploy
 New-Item -ItemType directory -Path C:\liferay\logs
 New-Item -ItemType directory -Path C:\liferay\osgi
+New-Item -ItemType directory -Path C:\liferay\wildfly-18.0.1.Final\modules\net\sourceforge\jtds\main
 Invoke-WebRequest https://raw.githubusercontent.com/Iakim/Liferay-Cluster-Powershell/master/module.xml -OutFile $DEPFOLDER\module.xml
 $URLDEP=(Invoke-WebRequest -UseBasicParsing "https://sourceforge.net/settings/mirror_choices?projectname=lportal&filename=Liferay%20Portal/7.3.2%20GA3/liferay-ce-portal-dependencies-7.3.2-ga3-20200519164024819.zip&selected=svwh").Content | %{[regex]::matches($_, '(?:Please use this <a href=")(.*)(?:">)').Groups[1].Value}
 Invoke-WebRequest -UseBasicParsing -OutFile C:\dependencies.zip $URLDEP
@@ -68,7 +69,9 @@ $URLOSGI=(Invoke-WebRequest -UseBasicParsing "https://sourceforge.net/settings/m
 Invoke-WebRequest -UseBasicParsing -OutFile C:\osgi.zip $URLOSGI
 $URLWAR=(Invoke-WebRequest -UseBasicParsing "https://sourceforge.net/settings/mirror_choices?projectname=lportal&filename=Liferay%20Portal/7.3.2%20GA3/liferay-ce-portal-7.3.2-ga3-20200519164024819.war&selected=svwh").Content | %{[regex]::matches($_, '(?:Please use this <a href=")(.*)(?:">)').Groups[1].Value}
 Invoke-WebRequest -UseBasicParsing -OutFile C:\ROOT.war $URLWAR
-Invoke-WebRequest  "https://search.maven.org/remotecontent?filepath=it/dontesta/labs/liferay/portal/db/liferay-portal-database-all-in-one-support/1.2.1/liferay-portal-database-all-in-one-support-1.2.1.jar" -OutFile C:\liferay-portal-database-all-in-one-support-1.2.1.jar
+Invoke-WebRequest "https://search.maven.org/remotecontent?filepath=it/dontesta/labs/liferay/portal/db/liferay-portal-database-all-in-one-support/1.2.1/liferay-portal-database-all-in-one-support-1.2.1.jar" -OutFile C:\liferay-portal-database-all-in-one-support-1.2.1.jar
+Invoke-WebRequest "https://raw.githubusercontent.com/Iakim/Liferay-Cluster-Powershell/master/module_jtds.xml" -OutFile C:\liferay\wildfly-18.0.1.Final\modules\net\sourceforge\jtds\main\module.xml
+Invoke-WebRequest "https://github.com/Iakim/Liferay-Cluster-Powershell/raw/master/jtds-1.3.1.jar" -OutFile C:\liferay\wildfly-18.0.1.Final\modules\net\sourceforge\jtds\main\jtds-1.3.1.jar
 Unzip C:\dependencies.zip $DEPFOLDER
 Move-Item $DEPFOLDER\liferay-ce-portal-dependencies-7.3.2-ga3\* $DEPFOLDER
 Remove-Item -Path $DEPFOLDER\liferay-ce-portal-dependencies-7.3.2-ga3
