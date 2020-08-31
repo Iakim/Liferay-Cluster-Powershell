@@ -115,4 +115,5 @@ Move-Item C:\liferay\osgi\liferay-ce-portal-osgi-7.3.2-ga3\* C:\liferay\osgi
 Remove-Item -Path C:\liferay\osgi\liferay-ce-portal-osgi-7.3.2-ga3
 Unzip C:\ROOT.war $WARFOLDER
 Move-Item C:\liferay-portal-database-all-in-one-support-1.2.1.jar $WARFOLDER\WEB-INF\lib
-
+New-Item -ItemType File "$WARFOLDER".dodeploy
+Start-Service WildFly_Liferay
