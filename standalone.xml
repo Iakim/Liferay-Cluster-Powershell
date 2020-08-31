@@ -161,7 +161,7 @@
                         <password>sa</password>
                     </security>
                 </datasource>
-		<datasource jta="true" jndi-name="java:jboss/LiferayDS" pool-name="LiferayDS" enabled="true" use-ccm="true">
+		<datasource jta="true" jndi-name="java:jboss/LiferayDS" pool-name="LiferayDS" enabled="false" use-ccm="true">
                     <connection-url>jdbc:sqlserver://server123456:1433;instanceName=DESENV;DatabaseName=lportal</connection-url>
                     <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
                     <driver>mssql.jar</driver>
