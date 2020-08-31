@@ -54,6 +54,18 @@ Unzip C:\wildfly-18.0.1.Final.zip C:\liferay
 Rename-Item $FILECONFIG "$FILECONFIG.old"
 Invoke-WebRequest https://raw.githubusercontent.com/Iakim/Liferay-Cluster-Powershell/master/standalone.xml -OutFile $FILECONFIG
 
+# Set JBOSS_HOME
+[System.Environment]::SetEnvironmentVariable("JBOSS_HOME","C:\liferay\wildfly-18.0.1.Final",[System.EnvironmentVariableTarget]::Machine)
+[System.Environment]::SetEnvironmentVariable("JBOSS_HOME","C:\liferay\wildfly-18.0.1.Final",[System.EnvironmentVariableTarget]::User)
+$JBOSS_HOME = "C:\liferay\wildfly-18.0.1.Final"
+
+# Install JBoss as Service
+New-Item -ItemType directory -Path C:\liferay\wildfly-18.0.1.Final\modules\net\sourceforge\jtds\main
+Rename-Item "C:\liferay\wildfly-18.0.1.Final\bin\standalone.conf.bat" "C:\liferay\wildfly-18.0.1.Final\bin\standalone.conf.bat.old"
+Invoke-WebRequest "https://raw.githubusercontent.com/Iakim/Liferay-Cluster-Powershell/master/standalone.conf.bat" -OutFile C:\liferay\wildfly-18.0.1.Final\bin\standalone.conf.bat
+Copy-Item -Path "C:\liferay\wildfly-18.0.1.Final\docs\contrib\scripts\services" "C:\liferay\wildfly-18.0.1.Final\bin"
+Start-Process "cmd.exe" "/k C:\liferay\wildfly-18.0.1.Final\bin\services\service.bat service install"
+
 # Install Liferay 7.3.2CE GA3
 New-Item -ItemType directory -Path $WARFOLDER
 New-Item -ItemType directory -Path $DEPFOLDER
@@ -61,8 +73,7 @@ New-Item -ItemType directory -Path C:\liferay\data
 New-Item -ItemType directory -Path C:\liferay\deploy
 New-Item -ItemType directory -Path C:\liferay\logs
 New-Item -ItemType directory -Path C:\liferay\osgi
-New-Item -ItemType directory -Path C:\liferay\wildfly-18.0.1.Final\modules\net\sourceforge\jtds\main
-Rename-Item "C:\liferay\wildfly-18.0.1.Final\bin\standalone.conf.bat" "C:\liferay\wildfly-18.0.1.Final\bin\standalone.conf.bat.old"
+
 Invoke-WebRequest https://raw.githubusercontent.com/Iakim/Liferay-Cluster-Powershell/master/module.xml -OutFile $DEPFOLDER\module.xml
 $URLDEP=(Invoke-WebRequest -UseBasicParsing "https://sourceforge.net/settings/mirror_choices?projectname=lportal&filename=Liferay%20Portal/7.3.2%20GA3/liferay-ce-portal-dependencies-7.3.2-ga3-20200519164024819.zip&selected=svwh").Content | %{[regex]::matches($_, '(?:Please use this <a href=")(.*)(?:">)').Groups[1].Value}
 Invoke-WebRequest -UseBasicParsing -OutFile C:\dependencies.zip $URLDEP
@@ -70,10 +81,11 @@ $URLOSGI=(Invoke-WebRequest -UseBasicParsing "https://sourceforge.net/settings/m
 Invoke-WebRequest -UseBasicParsing -OutFile C:\osgi.zip $URLOSGI
 $URLWAR=(Invoke-WebRequest -UseBasicParsing "https://sourceforge.net/settings/mirror_choices?projectname=lportal&filename=Liferay%20Portal/7.3.2%20GA3/liferay-ce-portal-7.3.2-ga3-20200519164024819.war&selected=svwh").Content | %{[regex]::matches($_, '(?:Please use this <a href=")(.*)(?:">)').Groups[1].Value}
 Invoke-WebRequest -UseBasicParsing -OutFile C:\ROOT.war $URLWAR
+
 Invoke-WebRequest "https://search.maven.org/remotecontent?filepath=it/dontesta/labs/liferay/portal/db/liferay-portal-database-all-in-one-support/1.2.1/liferay-portal-database-all-in-one-support-1.2.1.jar" -OutFile C:\liferay-portal-database-all-in-one-support-1.2.1.jar
 Invoke-WebRequest "https://raw.githubusercontent.com/Iakim/Liferay-Cluster-Powershell/master/module_jtds.xml" -OutFile C:\liferay\wildfly-18.0.1.Final\modules\net\sourceforge\jtds\main\module.xml
 Invoke-WebRequest "https://github.com/Iakim/Liferay-Cluster-Powershell/raw/master/jtds-1.3.1.jar" -OutFile C:\liferay\wildfly-18.0.1.Final\modules\net\sourceforge\jtds\main\jtds-1.3.1.jar
-Invoke-WebRequest "https://raw.githubusercontent.com/Iakim/Liferay-Cluster-Powershell/master/standalone.conf.bat" -OutFile C:\liferay\wildfly-18.0.1.Final\bin\standalone.conf.bat
+
 Unzip C:\dependencies.zip $DEPFOLDER
 Move-Item $DEPFOLDER\liferay-ce-portal-dependencies-7.3.2-ga3\* $DEPFOLDER
 Remove-Item -Path $DEPFOLDER\liferay-ce-portal-dependencies-7.3.2-ga3
@@ -82,3 +94,4 @@ Move-Item C:\liferay\osgi\liferay-ce-portal-osgi-7.3.2-ga3\* C:\liferay\osgi
 Remove-Item -Path C:\liferay\osgi\liferay-ce-portal-osgi-7.3.2-ga3
 Unzip C:\ROOT.war $WARFOLDER
 Move-Item C:\liferay-portal-database-all-in-one-support-1.2.1.jar $WARFOLDER\WEB-INF\lib
+
