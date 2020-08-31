@@ -63,7 +63,7 @@ $JBOSS_HOME = "C:\liferay\wildfly-18.0.1.Final"
 New-Item -ItemType directory -Path C:\liferay\wildfly-18.0.1.Final\modules\net\sourceforge\jtds\main
 Rename-Item "C:\liferay\wildfly-18.0.1.Final\bin\standalone.conf.bat" "C:\liferay\wildfly-18.0.1.Final\bin\standalone.conf.bat.old"
 Invoke-WebRequest "https://raw.githubusercontent.com/Iakim/Liferay-Cluster-Powershell/master/standalone.conf.bat" -OutFile C:\liferay\wildfly-18.0.1.Final\bin\standalone.conf.bat
-Copy-Item -Path "C:\liferay\wildfly-18.0.1.Final\docs\contrib\scripts\service" "C:\liferay\wildfly-18.0.1.Final\bin"
+Copy-Item -Path "C:\liferay\wildfly-18.0.1.Final\docs\contrib\scripts\service" "C:\liferay\wildfly-18.0.1.Final\bin" -Recurse
 Start-Process "cmd.exe" "/k C:\liferay\wildfly-18.0.1.Final\bin\service\service.bat service install"
 
 # Install Liferay 7.3.2CE GA3
