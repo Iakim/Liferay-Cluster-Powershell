@@ -64,7 +64,7 @@ New-Item -ItemType directory -Path C:\liferay\wildfly-18.0.1.Final\modules\net\s
 Rename-Item "C:\liferay\wildfly-18.0.1.Final\bin\standalone.conf.bat" "C:\liferay\wildfly-18.0.1.Final\bin\standalone.conf.bat.old"
 Invoke-WebRequest "https://raw.githubusercontent.com/Iakim/Liferay-Cluster-Powershell/master/standalone.conf.bat" -OutFile C:\liferay\wildfly-18.0.1.Final\bin\standalone.conf.bat
 Copy-Item -Path "C:\liferay\wildfly-18.0.1.Final\docs\contrib\scripts\service" "C:\liferay\wildfly-18.0.1.Final\bin" -Recurse
-Start-Process "cmd.exe" "/k C:\liferay\wildfly-18.0.1.Final\bin\service\service.bat service install"
+Start-Process "cmd.exe" "/k C:\liferay\wildfly-18.0.1.Final\bin\service\service.bat install /startup /name WildFly_Liferay /display WildFly_Liferay"
 
 # Install Liferay 7.3.2CE GA3
 New-Item -ItemType directory -Path $WARFOLDER
