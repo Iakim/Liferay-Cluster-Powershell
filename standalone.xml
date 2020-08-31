@@ -164,7 +164,7 @@
 		<datasource jta="true" jndi-name="java:jboss/LiferayDS" pool-name="LiferayDS" enabled="false" use-ccm="true">
                     <connection-url>jdbc:sqlserver://server123456:1433;instanceName=DESENV;DatabaseName=lportal</connection-url>
                     <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
-                    <driver>mssql.jar</driver>
+                    <driver>jtds</driver>
                     <pool>
 			<min-pool-size>1</min-pool-size>
 			<initial-pool-size>1</initial-pool-size>
