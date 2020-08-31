@@ -65,6 +65,27 @@ Rename-Item "C:\liferay\wildfly-18.0.1.Final\bin\standalone.conf.bat" "C:\lifera
 Invoke-WebRequest "https://raw.githubusercontent.com/Iakim/Liferay-Cluster-Powershell/master/standalone.conf.bat" -OutFile C:\liferay\wildfly-18.0.1.Final\bin\standalone.conf.bat
 Copy-Item -Path "C:\liferay\wildfly-18.0.1.Final\docs\contrib\scripts\service" "C:\liferay\wildfly-18.0.1.Final\bin" -Recurse
 Start-Process "cmd.exe" "/k C:\liferay\wildfly-18.0.1.Final\bin\service\service.bat install /startup /name WildFly_Liferay /display WildFly_Liferay"
+Start-Sleep 5
+function Set-ServiceRecovery{
+  [alias('Set-Recovery')]
+  param
+  (
+    [string] [Parameter(Mandatory=$true)] $ServiceDisplayName,
+    [string] $action1 = "restart",
+    [int] $time1 =  30000,
+    [string] $action2 = "restart",
+    [int] $time2 =  30000,
+    [string] $actionLast = "restart",
+    [int] $timeLast = 30000,
+    [int] $resetCounter = 4000
+  )
+  $services = Get-CimInstance -ClassName 'Win32_Service' | Where-Object {$_.DisplayName -imatch $ServiceDisplayName}
+  $action = $action1+"/"+$time1+"/"+$action2+"/"+$time2+"/"+$actionLast+"/"+$timeLast
+  foreach ($service in $services){
+    $output = sc.exe failure $($service.Name) actions= $action reset= $resetCounter
+  }
+}
+Set-ServiceRecovery -ServiceDisplayName "WildFly_Liferay"
 
 # Install Liferay 7.3.2CE GA3
 New-Item -ItemType directory -Path $WARFOLDER
