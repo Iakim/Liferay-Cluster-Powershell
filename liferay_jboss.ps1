@@ -106,6 +106,7 @@ Invoke-WebRequest -UseBasicParsing -OutFile C:\ROOT.war $URLWAR
 Invoke-WebRequest "https://search.maven.org/remotecontent?filepath=it/dontesta/labs/liferay/portal/db/liferay-portal-database-all-in-one-support/1.2.1/liferay-portal-database-all-in-one-support-1.2.1.jar" -OutFile C:\liferay-portal-database-all-in-one-support-1.2.1.jar
 Invoke-WebRequest "https://raw.githubusercontent.com/Iakim/Liferay-Cluster-Powershell/master/module_jtds.xml" -OutFile C:\liferay\wildfly-18.0.1.Final\modules\net\sourceforge\jtds\main\module.xml
 Invoke-WebRequest "https://github.com/Iakim/Liferay-Cluster-Powershell/raw/master/jtds-1.3.1.jar" -OutFile C:\liferay\wildfly-18.0.1.Final\modules\net\sourceforge\jtds\main\jtds-1.3.1.jar
+Invoke-WebRequest "https://github.com/Iakim/Liferay-Cluster-Powershell/raw/master/portal-ext.properties" -OutFile C:\liferay\portal-ext.properties
 
 Unzip C:\dependencies.zip $DEPFOLDER
 Move-Item $DEPFOLDER\liferay-ce-portal-dependencies-7.3.2-ga3\* $DEPFOLDER
