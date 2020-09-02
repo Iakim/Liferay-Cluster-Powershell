@@ -27,3 +27,4 @@
 
       standalone.conf.bat (JVM)
       standalone.xml (DataSource)
+      com.liferay.portal.search.elasticsearch6.configuration.ElasticsearchConfiguration.config (ElasticSearch configurations for liferay)
