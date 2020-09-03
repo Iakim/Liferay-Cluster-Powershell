@@ -107,7 +107,7 @@ Invoke-WebRequest "https://search.maven.org/remotecontent?filepath=it/dontesta/l
 Invoke-WebRequest "https://raw.githubusercontent.com/Iakim/Liferay-Cluster-Powershell/master/module_jtds.xml" -OutFile C:\liferay\wildfly-18.0.1.Final\modules\net\sourceforge\jtds\main\module.xml
 Invoke-WebRequest "https://github.com/Iakim/Liferay-Cluster-Powershell/raw/master/jtds-1.3.1.jar" -OutFile C:\liferay\wildfly-18.0.1.Final\modules\net\sourceforge\jtds\main\jtds-1.3.1.jar
 Invoke-WebRequest "https://github.com/Iakim/Liferay-Cluster-Powershell/raw/master/portal-ext.properties" -OutFile C:\liferay\portal-ext.properties
-
+Invoke-WebRequest "https://raw.githubusercontent.com/Iakim/Liferay-Cluster-Powershell/master/com.liferay.portal.search.elasticsearch6.configuration.ElasticsearchConfiguration.config" -OutFile C:\liferay\osgi\configs\com.liferay.portal.search.elasticsearch6.configuration.ElasticsearchConfiguration.config
 Unzip C:\dependencies.zip $DEPFOLDER
 Move-Item $DEPFOLDER\liferay-ce-portal-dependencies-7.3.2-ga3\* $DEPFOLDER
 Remove-Item -Path $DEPFOLDER\liferay-ce-portal-dependencies-7.3.2-ga3
